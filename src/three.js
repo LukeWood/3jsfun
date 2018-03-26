@@ -1,10 +1,6 @@
 import * as THREE from 'three'
 import OrbitControls from 'orbit-controls-es6'
-
-import vert from './shaders/shader.vert'
-import frag from './shaders/shader.frag'
-
-// Initial HMR Setup
+import load_beach from './scene/load_beach'
 if (module.hot) {
     module.hot.accept()
 
@@ -19,56 +15,30 @@ if (module.hot) {
     })
 }
 
-// Three Scene
 let scene, camera, renderer, animationId, controls
-let geometry, material, mesh
 
 function init() {
     scene = new THREE.Scene()
-
     camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
         1,
         10000
     )
-    camera.position.z = 1000
+    camera.position.y = 300;
+    camera.position.z = 300;
 
     controls = new OrbitControls(camera)
-
-    geometry = new THREE.BoxGeometry(200, 200, 200)
-    material = new THREE.RawShaderMaterial({
-        vertexShader: vert,
-        fragmentShader: frag
-    })
-
-    mesh = new THREE.Mesh(geometry, material)
-    scene.add(mesh)
-
-    for (let i = -5; i <= 5; i++) {
-        const geometry = new THREE.BoxGeometry(200, 200, 200)
-        const material = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            wireframe: true
-        })
-
-        const mesh = new THREE.Mesh(geometry, material)
-        scene.add(mesh)
-        mesh.position.x = i * 400
-    }
-
     renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setSize(window.innerWidth, window.innerHeight)
+
+    load_beach(scene)
 
     document.body.appendChild(renderer.domElement)
 }
 
 function animate() {
     animationId = requestAnimationFrame(animate)
-
-    mesh.rotation.x += 0.04
-    mesh.rotation.y += 0.02
-
     renderer.render(scene, camera)
 }
 
